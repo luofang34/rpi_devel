@@ -1,7 +1,25 @@
 #!/bin/bash
 
+# Clean up: Delete the downloaded tar.gz and the extracted folder
+cleanup() {
+    echo "Performing cleanup operations..."
+    rm -rf "${FILENAME}"
+    rm -rf "frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
+    echo "Cleanup complete."
+}
+
+# Trap command to catch exits and execute cleanup function
+trap cleanup EXIT
+
 # Ask user for machine name
-read -p "Enter the machine name: " machine_name
+read -p "Enter machine name (Press Enter for default 'rpi0'): " machine_name
+
+# Set default value if input is empty
+if [ -z "$machine_name" ]; then
+    machine_name="rpi0"
+fi
+
+echo "Machine name is set to: $machine_name"
 
 # Script to download, install, and configure 'frp' from GitHub based on system architecture and OS
 GITHUB_REPO="fatedier/frp"
@@ -34,7 +52,8 @@ TRANSLATED_ARCH=$(translate_architecture $ARCH)
 echo "Detected OS: $OS, Architecture: $ARCH, Translated Architecture: $TRANSLATED_ARCH"
 
 # Fetch the latest version number from GitHub releases page
-VERSION=$(curl -sL $RELEASES_PAGE | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -n 1)
+VERSION_TAG=$(wget -qO- $RELEASES_PAGE | grep -o 'v[0-9]*\.[0-9]*\.[0-9]*' | head -n 1)
+VERSION=${VERSION_TAG:1}  # Strip the 'v' from the version tag
 
 echo "Latest version: $VERSION"
 
@@ -46,17 +65,26 @@ fi
 
 # Construct the download URL with the latest version
 FILENAME="frp_${VERSION}_${OS}_${TRANSLATED_ARCH}.tar.gz"
-URL="https://github.com/$GITHUB_REPO/releases/download/$VERSION/$FILENAME"
+URL="https://github.com/$GITHUB_REPO/releases/download/$VERSION_TAG/$FILENAME"
 
 echo "Download URL: $URL"
 
-# Download the file
-curl -L $URL -o "${FILENAME}"
+# Check if a URL was found
+if [ -z "$URL" ]; then
+    echo "No download URL found for the current OS and architecture."
+    exit 1
+fi
 
-echo "Download complete."
+# Download the file
+curl -L $URL -o "${FILENAME//\*/}"
 
 # Unzip the downloaded file
-tar -zxvf "${FILENAME}"
+if tar -zxvf "${FILENAME}"; then
+    echo "Uzip complete."
+else
+    echo "unzip failed."
+    exit 1
+fi
 
 # Check for frpc executable and move it to /usr/bin
 if [ -f "./frp_${VERSION}_${OS}_${TRANSLATED_ARCH}/frpc" ]; then
@@ -113,11 +141,6 @@ echo "FRP client service created and started."
 
 echo "frpc installed and configured successfully."
 
-# Clean up: Delete the downloaded tar.gz and the extracted folder
-echo "Cleaning up..."
-rm -rf "${FILENAME}"
-rm -rf "frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
-
-echo "Cleanup complete."
+exit 0
 
 EOS
