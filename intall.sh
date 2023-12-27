@@ -113,4 +113,11 @@ echo "FRP client service created and started."
 
 echo "frpc installed and configured successfully."
 
+# Clean up: Delete the downloaded tar.gz and the extracted folder
+echo "Cleaning up..."
+rm -rf "${FILENAME}"
+rm -rf "frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
+
+echo "Cleanup complete."
+
 EOS
