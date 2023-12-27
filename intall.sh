@@ -201,7 +201,7 @@ source ~/.bashrc
 pyenv update
 
 # Find the latest Python 3.9.x version
-LATEST_PY39_VERSION= $(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
+LATEST_PY39_VERSION=$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
 
 if [ -z "$LATEST_PY39_VERSION" ]; then
     echo "No Python 3.9.x version found"
