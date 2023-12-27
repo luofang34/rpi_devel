@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Script to download, install, and configure 'frp' from GitHub based on system architecture and OS
+# Ask user for machine name
+read -p "Enter the machine name: " machine_name
 
+# Script to download, install, and configure 'frp' from GitHub based on system architecture and OS
 GITHUB_REPO="fatedier/frp"
 RELEASES_PAGE="https://github.com/$GITHUB_REPO/releases/latest"
 
@@ -68,9 +70,47 @@ fi
 # Create the configuration directory if it doesn't exist
 sudo mkdir -p /etc/frp
 
-# Export the contents of the provided file to /etc/frp/frpc.toml #TBD
-sudo cp "/path/to/uploaded/frpc.toml" /etc/frp/
+# Create the configuration with the user-provided machine name
+sudo cat <<EOF >/etc/frp/frpc.toml
+serverAddr = "luofang.org"
+serverPort = 7000
+ 
+[[proxies]]
+name = "$machine_name"
+type = "tcpmux"
+multiplexer = "httpconnect"
+customDomains = ["$machine_name.luofang.org"]
+localIP = "127.0.0.1"
+localPort = 22
+EOF
+
+echo "Configuration file created at /etc/frp/frpc.toml."
+
+# Create a systemd service file for FRP
+cat <<EOF >/etc/systemd/system/frpc.service
+[Unit]
+Description=Frp Client Service
+After=network.target
+
+[Service]
+Type=simple
+User=nobody
+Restart=on-failure
+RestartSec=5s
+ExecStart=/usr/bin/frpc -c /etc/frp/frpc.toml
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Reload systemd, enable and start the FRP service
+systemctl daemon-reload
+systemctl enable frpc.service
+systemctl start frpc.service
+
+echo "FRP client service created and started."
 
 echo "frpc installed and configured successfully."
 
-EOF
+EOS
