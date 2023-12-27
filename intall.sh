@@ -105,9 +105,9 @@ WantedBy=multi-user.target
 EOF
 
 # Reload systemd, enable and start the FRP service
-systemctl daemon-reload
-systemctl enable frpc.service
-systemctl start frpc.service
+sudo systemctl daemon-reload
+sudo systemctl enable frpc.service
+sudo systemctl start frpc.service
 
 echo "FRP client service created and started."
 
