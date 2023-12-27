@@ -108,7 +108,7 @@ sudo mkdir -p /etc/frp
 sudo cat <<EOF >/etc/frp/frpc.toml
 serverAddr = "luofang.org"
 serverPort = 7000
- 
+
 [[proxies]]
 name = "$machine_name"
 type = "tcpmux"
