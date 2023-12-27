@@ -147,6 +147,85 @@ echo "FRP client service created and started."
 
 echo "frpc installed and configured successfully."
 
+
+sudo apt-get update -y
+sudo apt-get dist-upgrade -y
+
+PREFERENCE="new"
+
+# Update and Upgrade Packages
+export DEBIAN_FRONTEND=noninteractive
+if [ "$PREFERENCE" = "keep" ]; then
+    sudo apt-get update
+    sudo apt-get -o Dpkg::Options::="--force-confold" --force-yes -y upgrade
+elif [ "$PREFERENCE" = "new" ]; then
+    sudo apt-get update
+    sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -y upgrade
+else
+    echo "Invalid preference set. Please choose 'keep' or 'new'."
+    exit 1
+fi
+
+# Install X11 server
+sudo apt-get install x11-apps -y
+
+# Backup the original sshd_config file
+cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
+
+# Add AllowTcpForwarding and X11Forwarding settings
+if ! grep -q "^AllowTcpForwarding" /etc/ssh/sshd_config; then
+    echo "AllowTcpForwarding yes" >> /etc/ssh/sshd_config
+else
+    sed -i 's/^AllowTcpForwarding no/AllowTcpForwarding yes/' /etc/ssh/sshd_config
+fi
+
+if ! grep -q "^X11Forwarding" /etc/ssh/sshd_config; then
+    echo "X11Forwarding yes" >> /etc/ssh/sshd_config
+else
+    sed -i 's/^X11Forwarding no/X11Forwarding yes/' /etc/ssh/sshd_config
+fi
+
+# Restart SSH service
+sudo systemctl restart sshd
+
+# Install Python 3.9
+sudo apt-get install -y git make build-essential libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
+    libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
+curl https://pyenv.run | bash
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"
+source ~/.bashrc
+
+pyenv update
+
+# Find the latest Python 3.9.x version
+LATEST_PY39_VERSION= 3.9.17 #$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
+
+if [ -z "$LATEST_PY39_VERSION" ]; then
+    echo "No Python 3.9.x version found"
+    exit 1
+else
+    echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
+fi
+
+if pyenv install $LATEST_PY39_VERSION; then
+    echo "Python 3.9 installed successfully."
+else
+    echo "Python 3.9 installation failed."
+    exit 1
+fi
+pyenv global $LATEST_PY39_VERSION
+
+git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
+mv TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi tflite1
+cd tflite1
+
+sudo pip3 install matplotlib virtualenv
+source tflite1-env/bin/activate
+bash get_pi_requirements.sh
+
 exit 0
 
 EOS
