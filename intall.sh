@@ -72,3 +72,5 @@ sudo mkdir -p /etc/frp
 sudo cp "/path/to/uploaded/frpc.toml" /etc/frp/
 
 echo "frpc installed and configured successfully."
+
+EOF
