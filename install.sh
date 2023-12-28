@@ -190,7 +190,7 @@ fi
 sudo systemctl restart sshd
 
 echo "installing python3.9"
-sudo su fangluo
+
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
