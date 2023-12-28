@@ -188,7 +188,7 @@ fi
 # Restart SSH service
 sudo systemctl restart sshd
 
-su fangluo
+sudo su fangluo
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
@@ -221,7 +221,7 @@ else
     echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
 fi
 
-pyenv install -f -kvp $LATEST_PY39_VERSION
+pyenv install -f $LATEST_PY39_VERSION
 pyenv global $LATEST_PY39_VERSION
 
 git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
