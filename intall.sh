@@ -221,12 +221,13 @@ else
     echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
 fi
 
-if pyenv install -f -kvp $LATEST_PY39_VERSION; then
-    echo "Python 3.9 installed successfully."
-else
-    echo "Python 3.9 installation failed."
-    exit 1
-fi
+#if pyenv install -f -kvp $LATEST_PY39_VERSION; then
+#    echo "Python 3.9 installed successfully."
+#else
+#    echo "Python 3.9 installation failed."
+#    exit 1
+#fi
+pyenv install -f -kvp $LATEST_PY39_VERSION
 pyenv global $LATEST_PY39_VERSION
 
 git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
