@@ -234,7 +234,7 @@ cd tflite1
 
 sudo pip3 install matplotlib virtualenv
 source tflite1-env/bin/activate
-bash get_pi_requirements.sh
+#bash get_pi_requirements.sh
 
 exit 0
 
