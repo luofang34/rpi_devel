@@ -16,8 +16,8 @@ fi
 cleanup() {
     echo "Performing cleanup operations..."
     chown -R $real_user /home/$real_user/.pyenv
-    rm -rf "${FILENAME}"
-    rm -rf "frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
+    rm -rf /home/$real_user/"${FILENAME}"
+    rm -rf /home/$real_user/"frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
     echo "Cleanup complete."
 }
 
@@ -246,15 +246,18 @@ echo "installing python3.9 with pyenv for $real_user"
 pyenv install -f $LATEST_PY39_VERSION
 pyenv global $LATEST_PY39_VERSION
 
-
 apt-get -y install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
 apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
 apt-get -y install libxvidcore-dev libx264-dev
 apt-get -y install qt4-dev-tools 
 apt-get -y install libatlas-base-dev
+
+echo 'Upgrade pip..'
+$HOME/.pyenv/shims/python3 -m pip install --upgrade pip
 $HOME/.pyenv/shims/python3 -m pip install matplotlib virtualenv opencv
 echo 'installing pycoral'
-$HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp39-cp39-linux_armv7l.whl
+$HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp39-cp39-linux_aarch64.whl
+$HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/pycoral-2.0.0-cp39-cp39-linux_aarch64.whl
 
 sudo -u $real_user git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
 mv TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi tflite1
