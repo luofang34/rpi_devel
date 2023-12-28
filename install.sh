@@ -205,10 +205,10 @@ then
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
     rm -rf /root/.pyenv
     echo "Installing pyenv..."
-    HOME=/home/$real_user/
-    
+    HOME=/home/$real_user
+
     # Apply pyenv settings
-    sudo -u $real_user echo 'export PYENV_ROOT="$HOME/.pyenv"'
+    sudo -u $real_user echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
     sudo -u $real_user echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
     sudo -u $real_user echo 'eval "$(pyenv init -)"' >> ~/.bashrc
     sudo -u $real_user echo '"$(pyenv virtualenv-init -)"' >> ~/.bashrc
