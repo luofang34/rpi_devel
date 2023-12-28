@@ -167,6 +167,7 @@ else
 fi
 
 # Install X11 server
+echo "installing x11 server"
 sudo apt-get install x11-apps -y
 
 # Backup the original sshd_config file
@@ -188,6 +189,7 @@ fi
 # Restart SSH service
 sudo systemctl restart sshd
 
+echo "installing python3.9"
 sudo su fangluo
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
