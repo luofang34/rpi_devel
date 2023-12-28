@@ -197,6 +197,16 @@ systemctl restart sshd
 
 echo "installing python3.9 from pyenv for $real_user"
 
+read -r -d '' pyenv_path << 'EOF'
+# Path for pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+
+# Load pyenv-virtualenv automatically
+eval "$(pyenv virtualenv-init -)"
+EOF
+
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
@@ -206,23 +216,16 @@ then
     rm -rf /root/.pyenv
     echo "Installing pyenv..."
     HOME=/home/$real_user
+    echo "$pyenv_path" >> $HOME/.bashrc
 
-    # Apply pyenv settings
-    sudo -u $real_user echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.bashrc
-    sudo -u $real_user echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.bashrc
-    sudo -u $real_user echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-    sudo -u $real_user echo '"$(pyenv virtualenv-init -)"' >> ~/.bashrc
-    sudo -u $real_user source ~/.bashrc
-    sudo -u $real_user pyenv update
-
-    curl -s -S -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
-    chown -R $real_user /home/$real_user/.pyenv
-    #curl https://pyenv.run | bash
-
-    # Add pyenv to path
+    # Add pyenv to temp path
     sudo -u $real_user export PATH="$HOME/.pyenv/bin:$PATH"
     sudo -u $real_user eval "$(pyenv init --path)"
     sudo -u $real_user eval "$(pyenv init -)"
+    # Install pyenv
+    curl -s -S -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+    chown -R $real_user /home/$real_user/.pyenv
+    #curl https://pyenv.run | bash
 fi
 echo "pyenv installed for $real_user"
 
