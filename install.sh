@@ -213,9 +213,13 @@ then
     sudo -u $real_user eval "$(pyenv init -)"
 
     # Apply pyenv settings
-    sudo -u $real_user echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
-    sudo -u $real_user echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
-    sudo -u $real_user echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    #sudo -u $real_user echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+    #sudo -u $real_user echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+    #sudo -u $real_user echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+
+    sudo -u $real_user echo export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)" >> ~/.bashrc
     sudo -u $real_user source ~/.bashrc
     sudo -u $real_user pyenv update
 fi
