@@ -207,15 +207,15 @@ then
     sudo -u $real_user curl https://pyenv.run | bash
 
     # Add pyenv to path
-    export PATH="$HOME/.pyenv/bin:$PATH"
-    eval "$(pyenv init --path)"
-    eval "$(pyenv init -)"
+    sudo -u $real_user export PATH="$HOME/.pyenv/bin:$PATH"
+    sudo -u $real_user eval "$(pyenv init --path)"
+    sudo -u $real_user eval "$(pyenv init -)"
 
     # Apply pyenv settings
-    echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
-    echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
-    source ~/.bashrc
+    sudo -u $real_user echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+    sudo -u $real_user echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+    sudo -u $real_user echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    sudo -u $real_user source ~/.bashrc
     sudo -u $real_user pyenv update
 fi
 echo "pyenv installed for $real_user"
@@ -233,14 +233,13 @@ fi
 echo "installing python3.9 with pyenv for $real_user"
 sudo -u $real_user pyenv install -f $LATEST_PY39_VERSION
 sudo -u $real_user pyenv global $LATEST_PY39_VERSION
-$SUDO_USER
 
 sudo -u $real_user git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
 mv TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi tflite1
 cd tflite1
 
 sudo -u $real_user pip3 install matplotlib virtualenv
-source tflite1-env/bin/activate
+sudo -u $real_user source tflite1-env/bin/activate
 #bash get_pi_requirements.sh
 
 exit 0
