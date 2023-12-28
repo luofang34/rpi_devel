@@ -1,10 +1,16 @@
 #!/bin/bash
 
-# Check if the script is run as root
-# if [[ $EUID -ne 0 ]]; then
-#   echo "This script must be run as root" 
-#   exit 1
-# fi
+#Check if the script is run as root
+if [[ $EUID -ne 0 ]]; then
+    echo "This script must be run as root" 
+    exit 1
+fi
+
+if [ $SUDO_USER ]; then
+    real_user=$SUDO_USER
+else
+    real_user=$(whoami)
+fi
 
 # Clean up: Delete the downloaded tar.gz and the extracted folder
 cleanup() {
@@ -95,17 +101,17 @@ fi
 # Check for frpc executable and move it to /usr/bin
 if [ -f "./frp_${VERSION}_${OS}_${TRANSLATED_ARCH}/frpc" ]; then
     echo "Moving frpc to /usr/bin/"
-    sudo mv "./frp_${VERSION}_${OS}_${TRANSLATED_ARCH}/frpc" /usr/bin/
+    mv "./frp_${VERSION}_${OS}_${TRANSLATED_ARCH}/frpc" /usr/bin/
 else
     echo "frpc executable not found."
     exit 1
 fi
 
 # Create the configuration directory if it doesn't exist
-sudo mkdir -p /etc/frp
+mkdir -p /etc/frp
 
 # Create the configuration with the user-provided machine name
-sudo cat <<EOF >/etc/frp/frpc.toml
+cat <<EOF >/etc/frp/frpc.toml
 serverAddr = "luofang.org"
 serverPort = 7000
 
@@ -139,28 +145,28 @@ WantedBy=multi-user.target
 EOF
 
 # Reload systemd, enable and start the FRP service
-sudo systemctl daemon-reload
-sudo systemctl enable frpc.service
-sudo systemctl start frpc.service
+systemctl daemon-reload
+systemctl enable frpc.service
+systemctl start frpc.service
 
 echo "FRP client service created and started."
 
 echo "frpc installed and configured successfully."
 
 
-sudo apt-get update -y
-sudo apt-get dist-upgrade -y
+apt-get update -y
+apt-get dist-upgrade -y
 
 PREFERENCE="new"
 
 # Update and Upgrade Packages
 export DEBIAN_FRONTEND=noninteractive
 if [ "$PREFERENCE" = "keep" ]; then
-    sudo apt-get update
-    sudo apt-get -o Dpkg::Options::="--force-confold" --allow -y upgrade
+    apt-get update
+    apt-get -o Dpkg::Options::="--force-confold" --allow -y upgrade
 elif [ "$PREFERENCE" = "new" ]; then
-    sudo apt-get update
-    sudo apt-get -o Dpkg::Options::="--force-confnew" --allow -y upgrade
+    apt-get update
+    apt-get -o Dpkg::Options::="--force-confnew" --allow -y upgrade
 else
     echo "Invalid preference set. Please choose 'keep' or 'new'."
     exit 1
@@ -168,7 +174,7 @@ fi
 
 # Install X11 server
 echo "installing x11 server"
-sudo apt-get install x11-apps -y
+apt-get install x11-apps -y
 
 # Backup the original sshd_config file
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup
@@ -187,18 +193,18 @@ else
 fi
 
 # Restart SSH service
-sudo systemctl restart sshd
+systemctl restart sshd
 
-echo "installing python3.9"
+echo "installing python3.9 from pyenv for $real_user"
 
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
-    sudo apt-get install -y git make build-essential libssl-dev zlib1g-dev \
+    sudo -u $real_user apt-get install -y git make build-essential libssl-dev zlib1g-dev \
     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
     echo "Installing pyenv..."
-    curl https://pyenv.run | bash
+    sudo -u $real_user curl https://pyenv.run | bash
 
     # Add pyenv to path
     export PATH="$HOME/.pyenv/bin:$PATH"
@@ -210,9 +216,9 @@ then
     echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
     echo 'eval "$(pyenv init -)"' >> ~/.bashrc
     source ~/.bashrc
-    pyenv update
+    sudo -u $real_user pyenv update
 fi
-echo "pyenv installed"
+echo "pyenv installed for $real_user"
 
 # Find the latest Python 3.9.x version and install it
 LATEST_PY39_VERSION=$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
@@ -224,15 +230,16 @@ else
     echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
 fi
 
-echo "installing python3.9 with pyenv"
-pyenv install -f $LATEST_PY39_VERSION
-pyenv global $LATEST_PY39_VERSION
+echo "installing python3.9 with pyenv for $real_user"
+sudo -u $real_user pyenv install -f $LATEST_PY39_VERSION
+sudo -u $real_user pyenv global $LATEST_PY39_VERSION
+$SUDO_USER
 
-git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
+sudo -u $real_user git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
 mv TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi tflite1
 cd tflite1
 
-sudo pip3 install matplotlib virtualenv
+sudo -u $real_user pip3 install matplotlib virtualenv
 source tflite1-env/bin/activate
 #bash get_pi_requirements.sh
 
