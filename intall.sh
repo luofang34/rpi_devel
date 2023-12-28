@@ -188,7 +188,7 @@ fi
 # Restart SSH service
 sudo systemctl restart sshd
 
-
+su fangluo
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
