@@ -212,7 +212,7 @@ then
 fi
 
 # Find the latest Python 3.9.x version and install it
-LATEST_PY39_VERSION=$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
+LATEST_PY39_VERSION=3.9.17 #$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
 
 if [ -z "$LATEST_PY39_VERSION" ]; then
     echo "No Python 3.9.x version found"
@@ -221,12 +221,6 @@ else
     echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
 fi
 
-#if pyenv install -f -kvp $LATEST_PY39_VERSION; then
-#    echo "Python 3.9 installed successfully."
-#else
-#    echo "Python 3.9 installation failed."
-#    exit 1
-#fi
 pyenv install -f -kvp $LATEST_PY39_VERSION
 pyenv global $LATEST_PY39_VERSION
 
