@@ -200,9 +200,10 @@ echo "installing python3.9 from pyenv for $real_user"
 # Install pyenv if not installed
 if ! command -v pyenv &> /dev/null
 then
-    sudo -u $real_user apt-get install -y git make build-essential libssl-dev zlib1g-dev \
+    apt-get install -y git make build-essential libssl-dev zlib1g-dev \
     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
+    rm -rf /root/.pyenv
     echo "Installing pyenv..."
     sudo -u $real_user curl https://pyenv.run | bash
 
