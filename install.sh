@@ -205,7 +205,7 @@ then
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
     rm -rf /root/.pyenv
     echo "Installing pyenv..."
-    PYENV_ROOT = ~$real_user/.pyenv/
+    HOME=/home/$real_user/
     curl -s -S -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
     #curl https://pyenv.run | bash
 
