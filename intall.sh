@@ -157,10 +157,10 @@ PREFERENCE="new"
 export DEBIAN_FRONTEND=noninteractive
 if [ "$PREFERENCE" = "keep" ]; then
     sudo apt-get update
-    sudo apt-get -o Dpkg::Options::="--force-confold" --force-yes -y upgrade
+    sudo apt-get -o Dpkg::Options::="--force-confold" --allow -y upgrade
 elif [ "$PREFERENCE" = "new" ]; then
     sudo apt-get update
-    sudo apt-get -o Dpkg::Options::="--force-confnew" --force-yes -y upgrade
+    sudo apt-get -o Dpkg::Options::="--force-confnew" --allow -y upgrade
 else
     echo "Invalid preference set. Please choose 'keep' or 'new'."
     exit 1
