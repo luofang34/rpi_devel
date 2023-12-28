@@ -188,19 +188,30 @@ fi
 # Restart SSH service
 sudo systemctl restart sshd
 
-# Install Python 3.9
-sudo apt-get install -y git make build-essential libssl-dev zlib1g-dev \
+
+# Install pyenv if not installed
+if ! command -v pyenv &> /dev/null
+then
+    sudo apt-get install -y git make build-essential libssl-dev zlib1g-dev \
     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
-curl https://pyenv.run | bash
-export PATH="$HOME/.pyenv/bin:$PATH"
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-source ~/.bashrc
+    echo "Installing pyenv..."
+    curl https://pyenv.run | bash
 
-pyenv update
+    # Add pyenv to path
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
 
-# Find the latest Python 3.9.x version
+    # Apply pyenv settings
+    echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc
+    echo 'eval "$(pyenv init --path)"' >> ~/.bashrc
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc
+    source ~/.bashrc
+    pyenv update
+fi
+
+# Find the latest Python 3.9.x version and install it
 LATEST_PY39_VERSION=$(pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
 
 if [ -z "$LATEST_PY39_VERSION" ]; then
