@@ -15,6 +15,7 @@ fi
 # Clean up: Delete the downloaded tar.gz and the extracted folder
 cleanup() {
     echo "Performing cleanup operations..."
+    chown -R $real_user /home/$real_user/.pyenv
     rm -rf "${FILENAME}"
     rm -rf "frp_${VERSION}_${OS}_${TRANSLATED_ARCH}"
     echo "Cleanup complete."
@@ -214,15 +215,17 @@ then
     libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
     rm -rf /root/.pyenv
-    echo "Installing pyenv..."
+    
     HOME=/home/$real_user
     echo "$pyenv_path" >> $HOME/.bashrc
 
     # Add pyenv to temp path
-    sudo -u $real_user export PATH="$HOME/.pyenv/bin:$PATH"
-    sudo -u $real_user eval "$(pyenv init --path)"
-    sudo -u $real_user eval "$(pyenv init -)"
+    export PATH="$HOME/.pyenv/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+
     # Install pyenv
+    echo "Installing pyenv..."
     curl -s -S -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
     chown -R $real_user /home/$real_user/.pyenv
     #curl https://pyenv.run | bash
@@ -230,7 +233,7 @@ fi
 echo "pyenv installed for $real_user"
 
 # Find the latest Python 3.9.x version and install it
-LATEST_PY39_VERSION=$(sudo -u $real_user pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
+LATEST_PY39_VERSION=$($HOME/.pyenv/bin/pyenv install --list | grep -Eo ' 3\.9\.[0-9]+$' | tail -1 | tr -d '[:space:]')
 
 if [ -z "$LATEST_PY39_VERSION" ]; then
     echo "No Python 3.9.x version found"
@@ -240,16 +243,22 @@ else
 fi
 
 echo "installing python3.9 with pyenv for $real_user"
-sudo -u $real_user pyenv install -f $LATEST_PY39_VERSION
-sudo -u $real_user pyenv global $LATEST_PY39_VERSION
+pyenv install -f $LATEST_PY39_VERSION
+pyenv global $LATEST_PY39_VERSION
+
+
+apt-get -y install libjpeg-dev libtiff5-dev libjasper-dev libpng12-dev
+apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+apt-get -y install libxvidcore-dev libx264-dev
+apt-get -y install qt4-dev-tools 
+apt-get -y install libatlas-base-dev
+$HOME/.pyenv/shims/python3 -m pip install matplotlib virtualenv opencv
+echo 'installing pycoral'
+$HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp39-cp39-linux_armv7l.whl
 
 sudo -u $real_user git clone https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi.git
 mv TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi tflite1
 cd tflite1
-
-sudo -u $real_user pip3 install matplotlib virtualenv
-sudo -u $real_user source tflite1-env/bin/activate
-#bash get_pi_requirements.sh
 
 exit 0
 
