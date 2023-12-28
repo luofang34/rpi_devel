@@ -254,7 +254,7 @@ apt-get -y install libatlas-base-dev
 
 echo 'Upgrade pip..'
 $HOME/.pyenv/shims/python3 -m pip install --upgrade pip
-$HOME/.pyenv/shims/python3 -m pip install matplotlib virtualenv opencv
+$HOME/.pyenv/shims/python3 -m pip install matplotlib virtualenv opencv-contrib-python
 echo 'installing pycoral'
 $HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/tflite_runtime-2.5.0.post1-cp39-cp39-linux_aarch64.whl
 $HOME/.pyenv/shims/python3 -m pip install https://github.com/google-coral/pycoral/releases/download/v2.0.0/pycoral-2.0.0-cp39-cp39-linux_aarch64.whl
