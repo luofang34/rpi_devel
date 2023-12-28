@@ -221,7 +221,7 @@ else
     echo "Latest Python 3.9 version available is: $LATEST_PY39_VERSION"
 fi
 
-if pyenv install $LATEST_PY39_VERSION; then
+if pyenv install $LATEST_PY39_VERSION -y; then
     echo "Python 3.9 installed successfully."
 else
     echo "Python 3.9 installation failed."
