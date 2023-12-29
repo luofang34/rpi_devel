@@ -7,7 +7,7 @@ fi
 
 
 #Add the Coral package repository to your apt-get distribution list by issuing the following commands:
-cd /home/$real_user/tflite1 
+cd /home/$real_user/tflite1
 echo "deb https://packages.cloud.google.com/apt coral-edgetpu-stable main" | sudo tee /etc/apt/sources.list.d/coral-edgetpu.list
 curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
 sudo apt-get update
