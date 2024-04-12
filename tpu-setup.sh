@@ -38,3 +38,9 @@ wget https://storage.googleapis.com/download.tensorflow.org/models/tflite/coco_s
 unzip coco_ssd_mobilenet_v1_1.0_quant_2018_06_29.zip -d Sample_TFLite_model
 wget https://dl.google.com/coral/canned_models/mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite
 mv mobilenet_ssd_v2_coco_quant_postprocess_edgetpu.tflite Sample_TFLite_model/edgetpu.tflite
+echo 'adding user to plugdev group'
+usermod -aG plugdev $real_user
+
+# Install qt5 requirements
+sudo apt-get update
+sudo apt-get install libqt5x11extras5 libxcb-xinerama0
