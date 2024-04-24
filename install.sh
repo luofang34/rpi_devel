@@ -113,14 +113,14 @@ mkdir -p /etc/frp
 
 # Create the configuration with the user-provided machine name
 cat <<EOF >/etc/frp/frpc.toml
-serverAddr = "luofang.org"
+serverAddr = "vps.sokolysystems.com"
 serverPort = 7000
 
 [[proxies]]
 name = "$machine_name"
 type = "tcpmux"
 multiplexer = "httpconnect"
-customDomains = ["$machine_name.luofang.org"]
+customDomains = ["$machine_name.vps.sokolysystems.com"]
 localIP = "127.0.0.1"
 localPort = 22
 EOF
