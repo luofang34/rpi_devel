@@ -251,6 +251,7 @@ apt-get -y install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
 apt-get -y install libxvidcore-dev libx264-dev
 apt-get -y install qt4-dev-tools 
 apt-get -y install libatlas-base-dev
+apt-get -y install libgl1
 
 echo 'Upgrade pip..'
 $HOME/.pyenv/shims/python3 -m pip install --upgrade pip
